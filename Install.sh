@@ -8,7 +8,7 @@ echo "Is this a client install? [Y/n] "
 
 echo "Creating locationLog service."
 sudo cp client/locationLog.service /lib/systemd/system/.
-sudo systemctl deamon-reload
+sudo systemctl daemon-reload
 sudo systemctl enable locationLog.service
 
 echo "exiting"
