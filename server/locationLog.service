@@ -1,0 +1,10 @@
+[Unit]
+Description=Logs location of clients
+After=multi-user.target
+
+[Service]
+Type=idle
+ExecStart=/usr/bin/python3 /root/server.py
+
+[Install]
+WantedBy=multi-user.target
