@@ -14,7 +14,7 @@ except ImportError:
 months = ["Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec"]
 
 class MyUDPHandler(socketserver.BaseRequestHandler):
-	cipher = None
+	RSAcipher = None
 
 	def handle(self):
 		data = self.request[0]
@@ -22,7 +22,7 @@ class MyUDPHandler(socketserver.BaseRequestHandler):
 
 		print("[ ] Recieved request")
 		try:
-			msg = self.cipher.decrypt(data).decode().split(" ", 1)
+			msg = self.RSAcipher.decrypt(data).decode().split(" ", 1)
 
 			if (msg[0] == '3317BLT5'):
 			with open("/var/log/locationLog", "a") as logFile:
@@ -33,9 +33,9 @@ class MyUDPHandler(socketserver.BaseRequestHandler):
 			#create AES key for reply
 			key = msg[1].strip()[:32].center(32)
 			iv = Random.new().read(AES.block_size)
-			cipher = AES.new(key, AES.MODE_CFB, iv)
+			AEScipher = AES.new(key, AES.MODE_CFB, iv)
 
-			reply = iv + cipher.encrypt("\t{0}\t{1:02}:{2:02}\n".format(msg[1][:5],date.tm_hour,date.tm_min))
+			reply = iv + AEScipher.encrypt("\t{0}\t{1:02}:{2:02}\n".format(msg[1][:5],date.tm_hour,date.tm_min))
 			print("[+] Sending success message")
 			
 		except BaseException as e:
@@ -55,7 +55,7 @@ if __name__ == "__main__":
 		exit(-2)
 
 	with open("./python.pem", "r") as keyFile:
-		MyUDPHandler.cipher = PKCS1_OAEP.new(RSA.importKey(keyFile.read()))
+		MyUDPHandler.RSAcipher = PKCS1_OAEP.new(RSA.importKey(keyFile.read()))
 
 	server = socketserver.UDPServer((HOST, PORT), MyUDPHandler)
 	server.serve_forever()
