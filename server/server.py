@@ -46,6 +46,14 @@ class MyUDPHandler(socketserver.BaseRequestHandler):
 		socket.sendto(reply + b"\n", self.client_address)
 		print("[+] Done")
 
+def keyGen(path):
+	key = RSA.generate(2048)
+	with open(path +'/python.pem','w') as privateKey:
+		privateKey.write(key.exportKey('PEM'))
+	with open(path+ '/python.pub', 'w') as publicKey:
+		publicKey.write(key.publickey.exportKey('PEM'))
+
+
 if __name__ == "__main__":
 	HOST, PORT = "0.0.0.0", 3145
 
