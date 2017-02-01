@@ -2,6 +2,8 @@ try:
 	import socketserver
 	import time
 	import sqlite3
+	import argparse
+	from sys import argv
 	from os.path import isfile
 	from Crypto.Cipher import PKCS1_OAEP
 	from Crypto.PublicKey import RSA
@@ -53,9 +55,18 @@ def keyGen(path):
 	with open(path+ '/python.pub', 'w') as publicKey:
 		publicKey.write(key.publickey.exportKey('PEM'))
 
+def parseArgs():
+	'''Parses args using the argparse lib'''
+	parser = argparse.ArgumentParser(description='Location logging server')
+
+	parser.add_argument('-g', '--generate-keys')
+	parser.add_argument('-h', '--host', nargs=1, type=str)
+	parser.add_argument('-p', '--port', nargs=1, type=int)
 
 if __name__ == "__main__":
 	HOST, PORT = "0.0.0.0", 3145
+
+	args = parseArgs()
 
 	#check if we have the private key
 	if not isfile("./python.pem"):
