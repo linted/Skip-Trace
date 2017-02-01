@@ -64,11 +64,17 @@ def parseArgs():
 	parser.add_argument('-a', '--address', nargs=1, type=inet_aton)
 	parser.add_argument('-p', '--port', nargs=1, type=int)
 
+	return parser.parse_args()
+
 
 if __name__ == "__main__":
 	HOST, PORT = "0.0.0.0", 3145
 
 	args = parseArgs()
+	if args.address:
+		HOST = args.address
+	if args.port:
+		PORT = args.port
 
 	#check if we have the private key
 	if not isfile("./python.pem"):
