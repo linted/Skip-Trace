@@ -3,6 +3,7 @@ try:
 	import time
 	import sqlite3
 	import argparse
+	from socket import inet_aton
 	from sys import argv
 	from os.path import isfile
 	from Crypto.Cipher import PKCS1_OAEP
@@ -60,8 +61,9 @@ def parseArgs():
 	parser = argparse.ArgumentParser(description='Location logging server')
 
 	parser.add_argument('-g', '--generate-keys')
-	parser.add_argument('-h', '--host', nargs=1, type=str)
+	parser.add_argument('-a', '--address', nargs=1, type=inet_aton)
 	parser.add_argument('-p', '--port', nargs=1, type=int)
+
 
 if __name__ == "__main__":
 	HOST, PORT = "0.0.0.0", 3145
