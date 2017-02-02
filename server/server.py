@@ -62,9 +62,8 @@ if __name__ == "__main__":
 
 	#check if we have the private key
 	if not isfile("./python.pem"):
-#		print("[-] Missing public key, Exiting")
-#		exit(-2)
-		keyGen(".")
+		print("[-] Missing public key, Exiting")
+		exit(-2)
 
 	with open("./python.pem", "r") as keyFile:
 		MyUDPHandler.RSAcipher = PKCS1_OAEP.new(RSA.importKey(keyFile.read()))
