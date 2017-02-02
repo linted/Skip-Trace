@@ -10,7 +10,7 @@ try:
 	from Crypto.PublicKey import RSA
 	from Crypto.Cipher import AES
 	from Crypto import Random
-except ImportError:
+except ImportError as e:
 	print("[-] {}, exiting".format(e))
 	exit(1)
 
@@ -60,7 +60,7 @@ def parseArgs():
 	'''Parses args using the argparse lib'''
 	parser = argparse.ArgumentParser(description='Location logging server')
 
-	parser.add_argument('-g', '--generate-keys')
+	parser.add_argument('-g', '--generate-keys', metavar='path')
 	parser.add_argument('-a', '--address', nargs=1, type=inet_aton)
 	parser.add_argument('-p', '--port', nargs=1, type=int)
 
@@ -71,6 +71,10 @@ if __name__ == "__main__":
 	HOST, PORT = "0.0.0.0", 3145
 
 	args = parseArgs()
+
+	#check our args and update vars accordingly
+	if args.generate_keys:
+		keyGen(args.generate_keys)
 	if args.address:
 		HOST = args.address
 	if args.port:
