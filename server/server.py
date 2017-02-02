@@ -3,7 +3,7 @@ try:
 	import time
 	import sqlite3
 	import argparse
-	from socket import inet_aton
+	from ipaddress import ip_address
 	from sys import argv
 	from os.path import isfile
 	from Crypto.Cipher import PKCS1_OAEP
@@ -60,9 +60,9 @@ def parseArgs():
 	'''Parses args using the argparse lib'''
 	parser = argparse.ArgumentParser(description='Location logging server')
 
-	parser.add_argument('-g', '--generate-keys', metavar='path')
-	parser.add_argument('-a', '--address', nargs=1, type=inet_aton)
-	parser.add_argument('-p', '--port', nargs=1, type=int)
+	parser.add_argument('-g', '--generate-keys', metavar='PATH', type=str)
+	parser.add_argument('-a', '--address', nargs=1, metavar='ADDRESS', type=ip_address)
+	parser.add_argument('-p', '--port', nargs=1, type=int, metavar='PORT', choices=range(1, 65536)) #ends at 65536 due to include entire range
 
 	return parser.parse_args()
 
@@ -74,11 +74,11 @@ if __name__ == "__main__":
 
 	#check our args and update vars accordingly
 	if args.generate_keys:
-		keyGen(args.generate_keys)
+		keyGen(args.generate_keys[0])
 	if args.address:
-		HOST = args.address
+		HOST = str(args.address[0])
 	if args.port:
-		PORT = args.port
+		PORT = args.port[0]
 
 	#check if we have the private key
 	if not isfile("./python.pem"):
