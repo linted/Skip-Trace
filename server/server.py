@@ -27,7 +27,7 @@ class MyUDPHandler(socketserver.BaseRequestHandler):
 		try:
 			msg = self.RSAcipher.decrypt(data).decode().split(" ", 1)
 
-			if (msg[0] == '3317BLT5'):
+#			if (msg[0] == '3317BLT5'):
 			with open("/var/log/locationLog", "a") as logFile:
 				date = time.localtime()
 				logFile.write("{0}  {1:02} {2:02}:{3:02}:{4:02}  {6} Checking in at {5}\n".format(months[date.tm_mon - 1], date.tm_mday, date.tm_hour, date.tm_min, date.tm_sec, self.client_address[0], msg[1].strip()))
@@ -60,9 +60,11 @@ def parseArgs():
 	'''Parses args using the argparse lib'''
 	parser = argparse.ArgumentParser(description='Location logging server')
 
+	portRange = lambda x: int(x) if int(x) > 0 and int(x) < 65536 else raise ValueError("Port out of range")
+
 	parser.add_argument('-g', '--generate-keys', metavar='PATH', type=str)
 	parser.add_argument('-a', '--address', nargs=1, metavar='ADDRESS', type=ip_address)
-	parser.add_argument('-p', '--port', nargs=1, type=int, metavar='PORT', choices=range(1, 65536)) #ends at 65536 due to include entire range
+	parser.add_argument('-p', '--port', nargs=1, metavar='PORT', type=portRange)
 
 	return parser.parse_args()
 
