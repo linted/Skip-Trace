@@ -47,8 +47,7 @@ class MyUDPHandler(socketserver.BaseRequestHandler):
 
 		finally:
 			socket.sendto(reply + b"\n", self.client_address)
-
-		print("[+] Done")
+			print("[+] Done")
 
 def keyGen(path):
 	key = RSA.generate(2048)
