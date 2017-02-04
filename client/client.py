@@ -1,4 +1,5 @@
 try:
+	import logging
 	import socket
 	from os.path import isfile
 	from Crypto.Cipher import PKCS1_OAEP
@@ -58,8 +59,24 @@ def sendAndRecv(msg, host, port, timeout=10):
 		print("[-] Could not reach server, {}.".format(e))
 		return None
 		
+def configDebugLog():
+	logFileName = "/var/log/skip_trace.log"
+
+	log_file = logging.FileHandler(logFileName)
+	log_file.setLevel(logging.DEBUG)
+	log_file.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
+
+	# ERROR level or higher should be output to console as well
+	log_console = logging.StreamHandler()
+	log_console.setLevel(logging.ERROR)
+	log_console.setFormatter(logging.Formatter('%(levelname)s: %(message)s'))
+
+	logger.getLogger('main_logger')
+	logger.addHandler(log_console)
+	logger.addHandler(log_file)
 
 if __name__ == "__main__":
+	configDebugLog()
 	SERVER, PORT = "localhost", 3145
 	print("[ ] Starting location logging")
 
