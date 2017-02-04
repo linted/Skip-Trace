@@ -21,7 +21,7 @@ class MyUDPHandler(socketserver.BaseRequestHandler):
 		data = self.request[0]
 		socket = self.request[1]
 
-		print("[ ] Recieved request")
+		logger.info("[ ] Recieved request")
 		try:
 			msg = self.RSAcipher.decrypt(data).decode().split(" ", 1)
 
@@ -31,12 +31,12 @@ class MyUDPHandler(socketserver.BaseRequestHandler):
 			with open("/var/log/locationLog", "a") as logFile:
 				date = time.localtime()
 				logFile.write("{0}  {1:02} {2:02}:{3:02}:{4:02}  {6} Checking in at {5}\n".format(months[date.tm_mon - 1], date.tm_mday, date.tm_hour, date.tm_min, date.tm_sec, self.client_address[0], msg[1].strip()))
-				print("[+] IP Logged to file")
+				logger.info("[+] IP Logged to file")
 			
 		except BaseException as e:
-			print("[-] Failure: {}".format(e))
+			logger.warning("[-] Failure: {}".format(e))
 			reply = Random.new().read(AES.block_size+13)
-			print("[-] Sending random message")
+			logger.info("[-] Sending random message")
 
 		else:
 			#create AES key for reply
@@ -44,11 +44,11 @@ class MyUDPHandler(socketserver.BaseRequestHandler):
 			iv = Random.new().read(AES.block_size)
 			AEScipher = AES.new(key, AES.MODE_CFB, iv)
 			reply = iv + AEScipher.encrypt("\t{0}\t{1:02}:{2:02}\n".format(msg[1][:5],date.tm_hour,date.tm_min))
-			print("[+] Sending success message")
+			logger.info("[+] Sending success message")
 
 		finally:
 			socket.sendto(reply + b"\n", self.client_address)
-			print("[+] Done")
+			logger.info("[+] Done")
 
 def keyGen(path):
 	key = RSA.generate(2048)
@@ -79,7 +79,7 @@ if __name__ == "__main__":
 
 	#check if we have the private key
 	if not isfile("./python.pem"):
-		print("[-] Missing public key, Exiting")
+		logger.critical("[-] Missing public key, Exiting")
 		exit(-2)
 
 	with open("./python.pem", "r") as keyFile:
