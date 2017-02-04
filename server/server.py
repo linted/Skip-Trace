@@ -60,7 +60,7 @@ def keyGen(path):
 def configDebugLog():
 	logFileName = "/var/log/skip_trace.log"
 
-	log_file = logging.FileHandler(logFileName)
+	log_file = logging.FileHandler(logFileName,mode='w')
 	log_file.setLevel(logging.DEBUG)
 	log_file.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
 
