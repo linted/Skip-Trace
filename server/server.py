@@ -1,5 +1,7 @@
 try:
-	import logging
+	import sys
+	sys.path.append('../common')
+	from STcommon import *
 	import socketserver
 	import time
 	import sqlite3
@@ -57,24 +59,8 @@ def keyGen(path):
 	with open(path+ '/python.pub', 'wb') as publicKey:
 		publicKey.write(key.publickey().exportKey('PEM'))
 
-def configDebugLog():
-	logFileName = "/var/log/skip_trace.log"
-
-	log_file = logging.FileHandler(logFileName,mode='w')
-	log_file.setLevel(logging.DEBUG)
-	log_file.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
-
-	# ERROR level or higher should be output to console as well
-	log_console = logging.StreamHandler()
-	log_console.setLevel(logging.ERROR)
-	log_console.setFormatter(logging.Formatter('%(levelname)s: %(message)s'))
-
-	logger.getLogger('main_logger')
-	logger.addHandler(log_console)
-	logger.addHandler(log_file)
-
 if __name__ == "__main__":
-	configDebugLog()
+	configDebugLog("/var/log/skip_trace.log")
 	HOST, PORT = "0.0.0.0", 3145
 
 	#check if we have the private key
