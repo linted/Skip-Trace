@@ -4,7 +4,6 @@ try:
 	import sqlite3
 	import argparse
 	from ipaddress import ip_address
-	from sys import argv
 	from os.path import isfile
 	from Crypto.Cipher import PKCS1_OAEP
 	from Crypto.PublicKey import RSA
