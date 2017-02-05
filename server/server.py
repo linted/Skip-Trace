@@ -61,8 +61,8 @@ def parseArgs():
 	parser = argparse.ArgumentParser(description='Location logging server')
 
 	parser.add_argument('-g', '--generate-keys', metavar='PATH', type=str)
-	parser.add_argument('-a', '--address', nargs=1, metavar='ADDRESS', type=ip_address)
-	parser.add_argument('-p', '--port', nargs=1, metavar='PORT', type=int)
+	parser.add_argument('-a', '--address', metavar='ADDRESS', type=ip_address)
+	parser.add_argument('-p', '--port', metavar='PORT', type=int)
 
 	return parser.parse_args()
 
@@ -74,15 +74,15 @@ if __name__ == "__main__":
 
 	#check our args and update vars accordingly
 	if args.generate_keys:
-		keyGen(args.generate_keys[0])
+		keyGen(args.generate_keys)
 	if args.address:
-		HOST = str(args.address[0])
+		HOST = str(args.address)
 	if args.port:
-		PORT = args.port[0]
+		PORT = args.port
 
 	#check if we have the private key
 	if not isfile("./python.pem"):
-		print("[-] Missing public key, Exiting")
+		print("[-] Missing private key, Exiting")
 		exit(-2)
 
 	with open("./python.pem", "r") as keyFile:
