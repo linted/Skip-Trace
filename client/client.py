@@ -5,6 +5,7 @@ try:
 	from Crypto.PublicKey import RSA
 	from Crypto.Cipher import AES
 	from Crypto import Random
+	from binascii import hexlify
 except ImportError as e:
 	print("[-] {}, exiting".format(e))
 	exit(1)
@@ -12,7 +13,7 @@ except ImportError as e:
 def main(HOST, PORT, CIPHER, tryAgain = 6):
 
 	AES_key = Random.new().read(32)
-	msg = CIPHER.encrypt("3317BLT5_#_{0}_#_{1}\n".format(socket.gethostname(), AES_key).encode())
+	msg = CIPHER.encrypt("3317BLT5_#_{0}_#_{1}\n".format(socket.gethostname(), hexlify(AES_key).decode()).encode())
 
 	# As you can see, there is no connect() call; UDP has no connections.
 	# Instead, data is directly sent to the recipient via sendto().

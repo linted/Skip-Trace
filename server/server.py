@@ -7,6 +7,7 @@ try:
 	from Crypto.PublicKey import RSA
 	from Crypto.Cipher import AES
 	from Crypto import Random
+	from binascii import unhexlify
 except ImportError:
 	print("[-] {}, exiting".format(e))
 	exit(1)
@@ -32,7 +33,7 @@ class MyUDPHandler(socketserver.BaseRequestHandler):
 			clientName = msg[1].strip()[:32]
 
 			#create AES key for reply
-			key = msg[2].strip()[:32]
+			key = unhexlify(msg[2].strip())
 			if len(key) != 32:
 				raise ValueError("Invalid key size")
 
