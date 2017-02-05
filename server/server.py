@@ -26,27 +26,30 @@ class MyUDPHandler(socketserver.BaseRequestHandler):
 		try:
 			msg = self.RSAcipher.decrypt(data).decode().split(" ", 1)
 
-			if (msg[0] == '3317BLT5'):
+			if (msg[0] != '3317BLT5'):
+				raise BaseException("Invalid magic number")
+
 			with open("/var/log/locationLog", "a") as logFile:
 				date = time.localtime()
 				logFile.write("{0}  {1:02} {2:02}:{3:02}:{4:02}  {6} Checking in at {5}\n".format(months[date.tm_mon - 1], date.tm_mday, date.tm_hour, date.tm_min, date.tm_sec, self.client_address[0], msg[1].strip()))
 				print("[+] IP Logged to file")
+			
+		except BaseException as e:
+			print("[-] Failure: {}".format(e))
+			reply = Random.new().read(AES.block_size+13)
+			print("[-] Sending random message")
 
+		else:
 			#create AES key for reply
 			key = msg[1].strip()[:32].center(32)
 			iv = Random.new().read(AES.block_size)
 			AEScipher = AES.new(key, AES.MODE_CFB, iv)
-
 			reply = iv + AEScipher.encrypt("\t{0}\t{1:02}:{2:02}\n".format(msg[1][:5],date.tm_hour,date.tm_min))
 			print("[+] Sending success message")
-			
-		except BaseException as e:
-			print("[-] Failure: {}".format(e))
-			print("[-] Sending random message")
-			reply = Random.new().read(AES.block_size+13)		
 
-		socket.sendto(reply + b"\n", self.client_address)
-		print("[+] Done")
+		finally:
+			socket.sendto(reply + b"\n", self.client_address)
+			print("[+] Done")
 
 def keyGen(path):
 	key = RSA.generate(2048)
