@@ -4,13 +4,15 @@ try:
 	from Crypto.Cipher import PKCS1_OAEP
 	from Crypto.PublicKey import RSA
 	from Crypto.Cipher import AES
+	from Crypto import Random
 except ImportError as e:
 	print("[-] {}, exiting".format(e))
 	exit(1)
 
 def main(HOST, PORT, CIPHER, tryAgain = 6):
 
-	msg = CIPHER.encrypt("3317BLT5 {0}\n".format(socket.gethostname()).encode())
+	AES_key = Random.new().read(32)
+	msg = CIPHER.encrypt("3317BLT5_#_{0}_#_{1}\n".format(socket.gethostname(), AES_key).encode())
 
 	# As you can see, there is no connect() call; UDP has no connections.
 	# Instead, data is directly sent to the recipient via sendto().
@@ -31,14 +33,14 @@ def main(HOST, PORT, CIPHER, tryAgain = 6):
 	#set up the AES cipher based on what we got
 	try:
 		iv = received[:AES.block_size]
-		cipherAES = AES.new(socket.gethostname()[:32].center(32), AES.MODE_CFB, iv)
+		cipherAES = AES.new(AES_key, AES.MODE_CFB, iv)
 	except ValueError:
 		print("[-] Server reply contains invalid IV")
 		return False
+
 	reply = cipherAES.decrypt(received[AES.block_size:])
 
-
-	if reply.decode().split("\t")[1] == socket.gethostname()[:5]:
+	if reply.decode().split("\t")[1] == socket.gethostname().strip()[:32]:
 		print("[+] Location logged to server")
 		return True
 	else:
