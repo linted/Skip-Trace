@@ -1,6 +1,4 @@
 try:
-	import sys
-	sys.path.append('../common')
 	from STcommon import *
 	import socketserver
 	import time
