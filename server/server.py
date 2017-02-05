@@ -60,7 +60,7 @@ def keyGen(path):
 		publicKey.write(key.publickey().exportKey('PEM'))
 
 if __name__ == "__main__":
-	configDebugLog("/var/log/skip_trace.log")
+	logger = configDebugLog("/var/log/skip_trace.log")
 	HOST, PORT = "0.0.0.0", 3145
 
 	#check if we have the private key

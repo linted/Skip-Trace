@@ -10,7 +10,7 @@ def configDebugLog(logFileName):
 	log_console.setLevel(logging.ERROR)
 	log_console.setFormatter(logging.Formatter('%(levelname)s: %(message)s'))
 
-	global logger
 	logger = logging.getLogger('main_logger')
 	logger.addHandler(log_console)
 	logger.addHandler(log_file)
+	return logger

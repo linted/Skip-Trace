@@ -62,7 +62,7 @@ def sendAndRecv(msg, host, port, timeout=10):
 		return None
 
 if __name__ == "__main__":
-	configDebugLog("/var/log/skip_trace.log")
+	logger = configDebugLog("/var/log/skip_trace.log")
 	SERVER, PORT = "localhost", 3145
 	logger.info("[ ] Starting location logging")
 
