@@ -10,7 +10,7 @@ try:
 	from Crypto.PublicKey import RSA
 	from Crypto.Cipher import AES
 	from Crypto import Random
-except ImportError:
+except ImportError as e:
 	print("[-] {}, exiting".format(e))
 	exit(1)
 
