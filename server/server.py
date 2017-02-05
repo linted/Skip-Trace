@@ -51,10 +51,10 @@ class MyUDPHandler(socketserver.BaseRequestHandler):
 
 def keyGen(path):
 	key = RSA.generate(2048)
-	with open(path +'/python.pem','w') as privateKey:
+	with open(path +'/python.pem','wb') as privateKey:
 		privateKey.write(key.exportKey('PEM'))
-	with open(path+ '/python.pub', 'w') as publicKey:
-		publicKey.write(key.publickey.exportKey('PEM'))
+	with open(path+ '/python.pub', 'wb') as publicKey:
+		publicKey.write(key.publickey().exportKey('PEM'))
 
 def parseArgs():
 	'''Parses args using the argparse lib'''
