@@ -1,6 +1,6 @@
 try:
 	import socketserver
-	import time
+	import datetime
 	import sqlite3
 	from os.path import isfile
 	from Crypto.Cipher import PKCS1_OAEP
@@ -10,8 +10,6 @@ try:
 except ImportError:
 	print("[-] {}, exiting".format(e))
 	exit(1)
-
-months = ["Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec"]
 
 class MyUDPHandler(socketserver.BaseRequestHandler):
 	RSAcipher = None
@@ -28,8 +26,8 @@ class MyUDPHandler(socketserver.BaseRequestHandler):
 				raise BaseException("Invalid magic number")
 
 			with open("/var/log/locationLog", "a") as logFile:
-				date = time.localtime()
-				logFile.write("{0}  {1:02} {2:02}:{3:02}:{4:02}  {6} Checking in at {5}\n".format(months[date.tm_mon - 1], date.tm_mday, date.tm_hour, date.tm_min, date.tm_sec, self.client_address[0], msg[1].strip()))
+				date = datetime.now()
+				logFile.write("{0}  {2} Checking in at {1}\n".format(date.strftime('%b %d %H:%M:%S'),self.client_address[0], msg[1].strip()))
 				print("[+] IP Logged to file")
 			
 		except BaseException as e:
