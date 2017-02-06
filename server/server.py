@@ -31,6 +31,8 @@ class MyUDPHandler(socketserver.BaseRequestHandler):
 
 			#get client Name
 			clientName = msg[1].strip()[:32]
+			if len(clientName) == 0:
+				raise ValueError("Invalid hostname size")
 
 			#create AES key for reply
 			key = unhexlify(msg[2].strip())
