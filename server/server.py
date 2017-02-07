@@ -1,6 +1,6 @@
 try:
 	import socketserver
-	import datetime
+	from time import strftime
 	import sqlite3
 	from os.path import isfile
 	from Crypto.Cipher import PKCS1_OAEP
@@ -26,8 +26,7 @@ class MyUDPHandler(socketserver.BaseRequestHandler):
 				raise BaseException("Invalid magic number")
 
 			with open("/var/log/locationLog", "a") as logFile:
-				date = datetime.now()
-				logFile.write("{0}  {2} Checking in at {1}\n".format(date.strftime('%b %d %H:%M:%S'),self.client_address[0], msg[1].strip()))
+				logFile.write("{0}  {2} Checking in at {1}\n".format(strftime('%b  %d %H:%M:%S'),self.client_address[0], msg[1].strip()))
 				print("[+] IP Logged to file")
 			
 		except BaseException as e:
