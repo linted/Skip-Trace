@@ -18,7 +18,7 @@ class MyUDPHandler(socketserver.BaseRequestHandler):
 	RSAcipher = None
 
 	def handle(self):
-		data, socket = self.request[:2]
+		data, socket = self.request
 
 		print("[ ] Recieved request")
 		try:
