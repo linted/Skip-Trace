@@ -1,4 +1,5 @@
 try:
+	from STcommon import *
 	import socketserver
 	import time
 	import sqlite3
@@ -22,7 +23,7 @@ class MyUDPHandler(socketserver.BaseRequestHandler):
 	def handle(self):
 		data, socket = self.request
 
-		print("[ ] Recieved request")
+		logger.info("[ ] Recieved request")
 		try:
 			msg = self.RSAcipher.decrypt(data).decode().split("_#_", 2)
 
@@ -43,24 +44,23 @@ class MyUDPHandler(socketserver.BaseRequestHandler):
 			with open("/var/log/locationLog", "a") as logFile:
 				date = time.localtime()
 				logFile.write("{0}  {1:02} {2:02}:{3:02}:{4:02}  {6} Checking in at {5}\n".format(months[date.tm_mon - 1], date.tm_mday, date.tm_hour, date.tm_min, date.tm_sec, self.client_address[0], clientName))
-				print("[+] IP Logged to file")
-
+				logger.info("[+] IP Logged to file")
 			
 		except BaseException as e:
-			print("[-] Failure: {}".format(e))
+			logger.warning("[-] Failure: {}".format(e))
 			reply = Random.new().read(AES.block_size+13)
-			print("[-] Sending random message")
+			logger.info("[-] Sending random message")
 
 		else:
 			#create AES cipher
 			iv = Random.new().read(AES.block_size)
 			AEScipher = AES.new(key, AES.MODE_CFB, iv)
 			reply = iv + AEScipher.encrypt("\t{0}\t{1:02}:{2:02}\n".format(clientName,date.tm_hour,date.tm_min))
-			print("[+] Sending success message")
+			logger.info("[+] Sending success message")
 
 		finally:
 			socket.sendto(reply + b"\n", self.client_address)
-			print("[+] Done")
+			logger.info("[+] Done")
 
 def keyGen(path):
 	key = RSA.generate(2048)
@@ -79,8 +79,8 @@ def parseArgs():
 
 	return parser.parse_args()
 
-
 if __name__ == "__main__":
+	logger = configDebugLog("/var/log/skip_trace.log")
 	HOST, PORT = "0.0.0.0", 3145
 
 	args = parseArgs()
@@ -95,7 +95,7 @@ if __name__ == "__main__":
 
 	#check if we have the private key
 	if not isfile("./python.pem"):
-		print("[-] Missing private key, Exiting")
+		logger.critical("[-] Missing public key, Exiting")
 		exit(-2)
 
 	with open("./python.pem", "r") as keyFile:

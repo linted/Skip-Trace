@@ -1,4 +1,5 @@
 try:
+	from STcommon import *
 	import socket
 	import argparse
 	from ipaddress import ip_address
@@ -19,18 +20,18 @@ def main(HOST, PORT, CIPHER, tryAgain = 6):
 
 	# As you can see, there is no connect() call; UDP has no connections.
 	# Instead, data is directly sent to the recipient via sendto().
-	print("[ ] sending message to {}:{}".format(HOST,PORT))
+	logger.info("[ ] sending message to {}:{}".format(HOST,PORT))
 		
 	#try connecting tryAgain number of times
 	for i in range(tryAgain):
-		print("[ ] Attempting to contact server")
+		logger.debug("[ ] Attempting to contact server")
 		received = sendAndRecv(msg, HOST, PORT)
 		if received:
 			#break so that we don't exit... control flow is great
-			print("[+] Got a reply")
+			logger.debug("[+] Got a reply")
 			break
 	else:
-		print("[-] Unable to connect to server, quiting.")
+		logger.critical("[-] Unable to connect to server, quiting.")
 		exit(2)
 
 	#set up the AES cipher based on what we got
@@ -38,16 +39,16 @@ def main(HOST, PORT, CIPHER, tryAgain = 6):
 		iv = received[:AES.block_size]
 		cipherAES = AES.new(AES_key, AES.MODE_CFB, iv)
 	except ValueError:
-		print("[-] Server reply contains invalid IV")
+		logger.warning("[-] Server reply contains invalid IV")
 		return False
 
 	reply = cipherAES.decrypt(received[AES.block_size:])
 
 	if reply.decode().split("\t")[1] == socket.gethostname().strip()[:32]:
-		print("[+] Location logged to server")
+		logger.info("[+] Location logged to server")
 		return True
 	else:
-		print("[-] Invalid server response")
+		logger.warning("[-] Invalid server response")
 		return False
 
 def sendAndRecv(msg, host, port, timeout=10):
@@ -56,13 +57,13 @@ def sendAndRecv(msg, host, port, timeout=10):
 	sock.settimeout(timeout)
 	try:
 		sock.sendto(msg, (host, port))
-		print("[ ] message sent, waiting for reply.")
+		logger.info("[ ] message sent, waiting for reply.")
 		received = sock.recv(1024).strip()
 		return received
 	except (socket.gaierror, socket.timeout) as e:
-		print("[-] Could not reach server, {}.".format(e))
+		logger.warning("[-] Could not reach server, {}.".format(e))
 		return None
-		
+
 def parseArgs():
 	'''Parses args using the argparse lib'''
 	parser = argparse.ArgumentParser(description='Location logging server')
@@ -73,8 +74,9 @@ def parseArgs():
 	return parser.parse_args()
 
 if __name__ == "__main__":
+	logger = configDebugLog("/var/log/skip_trace.log")
 	HOST, PORT = "localhost", 3145
-	print("[ ] Starting location logging")
+	logger.info("[ ] Starting location logging")
 
 	args = parseArgs()
 
@@ -86,7 +88,7 @@ if __name__ == "__main__":
 
 	#check if we have the public key 
 	if not isfile("./python.pub"):
-		print("[-] Missing public key, Exiting")
+		logger.critical("[-] Missing public key, Exiting")
 		exit(3)
 
 	#get the public key and create the cipher
@@ -94,5 +96,5 @@ if __name__ == "__main__":
 		cipherRSA = PKCS1_OAEP.new(RSA.importKey(keyFile.read()))
 
 	while(not main(SERVER, PORT, cipherRSA)):
-		print("[ ] Trying again.")
+		logger.info("[ ] Trying again.")
 	exit(0)
