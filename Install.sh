@@ -8,6 +8,8 @@ read -p "Is this a client install? [Y/n] " -n 1 install
 
 if ["$install" == "n" || "$install" == "N"]; then
     echo "Creating Server Instalation"
+    echo "Moving common files to /root"
+    sudo cp common/STcommon.py /root/.
     echo "Moving server script to /root"
     sudo cp server/server.py /root/.
 
@@ -17,6 +19,8 @@ if ["$install" == "n" || "$install" == "N"]; then
     sudo systemctl enable locationLog.service
 else
     echo "Creating Server Instalation"
+    echo "Moving common files to /root"
+    sudo cp common/STcommon.py /root/.
     echo "Moving server script to /root"
     sudo cp server/server.py /root/.
     
