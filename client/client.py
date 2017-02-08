@@ -1,5 +1,7 @@
 try:
 	import socket
+	import argparse
+	from ipaddress import ip_address
 	from os.path import isfile
 	from Crypto.Cipher import PKCS1_OAEP
 	from Crypto.PublicKey import RSA
@@ -61,10 +63,26 @@ def sendAndRecv(msg, host, port, timeout=10):
 		print("[-] Could not reach server, {}.".format(e))
 		return None
 		
+def parseArgs():
+	'''Parses args using the argparse lib'''
+	parser = argparse.ArgumentParser(description='Location logging server')
+
+	parser.add_argument('-a', '--address', metavar='ADDRESS', type=ip_address)
+	parser.add_argument('-p', '--port', metavar='PORT', type=int)
+
+	return parser.parse_args()
 
 if __name__ == "__main__":
-	SERVER, PORT = "localhost", 3145
+	HOST, PORT = "localhost", 3145
 	print("[ ] Starting location logging")
+
+	args = parseArgs()
+
+	#check our args and update vars accordingly
+	if args.address:
+		HOST = str(args.address)
+	if args.port:
+		PORT = args.port
 
 	#check if we have the public key 
 	if not isfile("./python.pub"):

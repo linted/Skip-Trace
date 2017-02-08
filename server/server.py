@@ -2,13 +2,15 @@ try:
 	import socketserver
 	import time
 	import sqlite3
+	import argparse
+	from ipaddress import ip_address
 	from os.path import isfile
 	from Crypto.Cipher import PKCS1_OAEP
 	from Crypto.PublicKey import RSA
 	from Crypto.Cipher import AES
 	from Crypto import Random
 	from binascii import unhexlify
-except ImportError:
+except ImportError as e:
 	print("[-] {}, exiting".format(e))
 	exit(1)
 
@@ -67,13 +69,33 @@ def keyGen(path):
 	with open(path+ '/python.pub', 'wb') as publicKey:
 		publicKey.write(key.publickey().exportKey('PEM'))
 
+def parseArgs():
+	'''Parses args using the argparse lib'''
+	parser = argparse.ArgumentParser(description='Location logging server')
+
+	parser.add_argument('-g', '--generate-keys', metavar='PATH', type=str)
+	parser.add_argument('-a', '--address', metavar='ADDRESS', type=ip_address)
+	parser.add_argument('-p', '--port', metavar='PORT', type=int)
+
+	return parser.parse_args()
+
 
 if __name__ == "__main__":
 	HOST, PORT = "0.0.0.0", 3145
 
+	args = parseArgs()
+
+	#check our args and update vars accordingly
+	if args.generate_keys:
+		keyGen(args.generate_keys)
+	if args.address:
+		HOST = str(args.address)
+	if args.port:
+		PORT = args.port
+
 	#check if we have the private key
 	if not isfile("./python.pem"):
-		print("[-] Missing public key, Exiting")
+		print("[-] Missing private key, Exiting")
 		exit(-2)
 
 	with open("./python.pem", "r") as keyFile:
