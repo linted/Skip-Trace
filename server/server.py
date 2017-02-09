@@ -1,5 +1,5 @@
 try:
-	from STcommon import *
+	from STcommon import configDebugLog
 	import socketserver
 	import time
 	import sqlite3
