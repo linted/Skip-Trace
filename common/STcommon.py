@@ -1,5 +1,9 @@
-import logging
-from Crypto.PublicKey import RSA
+try:
+	import logging
+	from Crypto.PublicKey import RSA
+except ImportError as e:
+	print("[-] {}, exiting".format(e))
+	exit(1)
 
 def configDebugLog(logFileName):
 	log_file = logging.FileHandler(logFileName,mode='w')
