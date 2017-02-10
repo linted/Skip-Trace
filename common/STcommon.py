@@ -1,4 +1,9 @@
-import logging
+try:
+	import logging
+	from Crypto.PublicKey import RSA
+except ImportError as e:
+	print("[-] {}, exiting".format(e))
+	exit(1)
 
 def configDebugLog(logFileName):
 	log_file = logging.FileHandler(logFileName,mode='w')
@@ -14,3 +19,24 @@ def configDebugLog(logFileName):
 	logger.addHandler(log_console)
 	logger.addHandler(log_file)
 	return logger
+
+def keyGen(path):
+	key = RSA.generate(2048)
+	with open(path +'/python.pem','wb') as privateKey:
+		privateKey.write(key.exportKey('PEM'))
+	with open(path+ '/python.pub', 'wb') as publicKey:
+		publicKey.write(key.publickey().exportKey('PEM'))
+
+def parseArgs():
+	'''Parses args using the argparse lib'''
+	parser = argparse.ArgumentParser(description='Location logging server')
+
+	parser.add_argument('-g', '--generate-keys', metavar='PATH', type=str)
+
+	return parser.parse_args()
+
+if __name__ == "__main__":
+	args = parseArgs()
+
+	if args.generate_keys:
+		keyGen(args.generate_keys)

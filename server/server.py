@@ -62,18 +62,10 @@ class MyUDPHandler(socketserver.BaseRequestHandler):
 			socket.sendto(reply + b"\n", self.client_address)
 			logger.info("[+] Done")
 
-def keyGen(path):
-	key = RSA.generate(2048)
-	with open(path +'/python.pem','wb') as privateKey:
-		privateKey.write(key.exportKey('PEM'))
-	with open(path+ '/python.pub', 'wb') as publicKey:
-		publicKey.write(key.publickey().exportKey('PEM'))
-
 def parseArgs():
 	'''Parses args using the argparse lib'''
 	parser = argparse.ArgumentParser(description='Location logging server')
 
-	parser.add_argument('-g', '--generate-keys', metavar='PATH', type=str)
 	parser.add_argument('-a', '--address', metavar='ADDRESS', type=ip_address)
 	parser.add_argument('-p', '--port', metavar='PORT', type=int)
 
@@ -86,8 +78,6 @@ if __name__ == "__main__":
 	args = parseArgs()
 
 	#check our args and update vars accordingly
-	if args.generate_keys:
-		keyGen(args.generate_keys)
 	if args.address:
 		HOST = str(args.address)
 	if args.port:
