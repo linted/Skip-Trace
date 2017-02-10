@@ -1,7 +1,7 @@
 try:
 	from STcommon import configDebugLog
 	import socketserver
-	import time
+	from time import strftime
 	import sqlite3
 	import argparse
 	from ipaddress import ip_address
@@ -14,8 +14,6 @@ try:
 except ImportError as e:
 	print("[-] {}, exiting".format(e))
 	exit(1)
-
-months = ["Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec"]
 
 class MyUDPHandler(socketserver.BaseRequestHandler):
 	RSAcipher = None
@@ -42,9 +40,8 @@ class MyUDPHandler(socketserver.BaseRequestHandler):
 				raise ValueError("Invalid key size")
 
 			with open("/var/log/locationLog", "a") as logFile:
-				date = time.localtime()
-				logFile.write("{0}  {1:02} {2:02}:{3:02}:{4:02}  {6} Checking in at {5}\n".format(months[date.tm_mon - 1], date.tm_mday, date.tm_hour, date.tm_min, date.tm_sec, self.client_address[0], clientName))
-				logger.info("[+] IP Logged to file")
+				logFile.write(strftime('%b  %d %H:%M:%S  {0} checking in at {1}\n'.format(clientName,self.client_address[0])))
+				print("[+] IP Logged to file")
 			
 		except BaseException as e:
 			logger.warning("[-] Failure: {}".format(e))
