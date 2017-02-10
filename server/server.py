@@ -68,8 +68,7 @@ def parseArgs():
 
 	return parser.parse_args()
 
-if __name__ == "__main__":
-	logger = configDebugLog("/var/log/skip_trace.log")
+def main():
 	HOST, PORT = "0.0.0.0", 3145
 
 	args = parseArgs()
@@ -90,3 +89,7 @@ if __name__ == "__main__":
 
 	server = socketserver.UDPServer((HOST, PORT), MyUDPHandler)
 	server.serve_forever()
+
+if __name__ == "__main__":
+	logger = configDebugLog("/var/log/skip_trace.log")
+	main()
