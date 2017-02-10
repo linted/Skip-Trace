@@ -40,7 +40,7 @@ class MyUDPHandler(socketserver.BaseRequestHandler):
 				raise ValueError("Invalid key size")
 
 			with open("/var/log/locationLog", "a") as logFile:
-				logFile.write(strftime('%b  %d %H:%M:%S  {1} checking in at {0}\n'.format(self.client_address[0],clientName)))
+				logFile.write(strftime('%b  %d %H:%M:%S  {0} checking in at {1}\n'.format(clientName,self.client_address[0])))
 				print("[+] IP Logged to file")
 			
 		except BaseException as e:
