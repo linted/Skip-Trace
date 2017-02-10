@@ -34,10 +34,11 @@ class MyUDPHandler(socketserver.BaseRequestHandler):
 
 			#get client Name
 			clientName = msg[1].strip()[:32]
-			if len(clientName) < 1 or len(clientName) > 253:
+			if 0 < len(clientName) <= 253:
+				if !(is_valid_hostname(clientName)):
+					raise ValueError("Invalid hostname")
+			else
 				raise ValueError("Invalid hostname size")
-			elif !(is_valid_hostname(clientName)):
-				raise ValueError("Invalid hostname")
 
 			#create AES key for reply
 			key = unhexlify(msg[2].strip())
@@ -66,10 +67,8 @@ class MyUDPHandler(socketserver.BaseRequestHandler):
 			logger.info("[+] Done")
 
 def is_valid_hostname(hostname):
-    if hostname[-1] == ".":
-        # strip exactly one dot from the right, if present
-        hostname = hostname[:-1]
-    labels = hostname.split(".")
+    hostname = hostname.rstrip('.');
+    labels = hostname.split('.')
     # the TLD must be not all-numeric
     if re.match(r"[0-9]+$", labels[-1]):
         return False
