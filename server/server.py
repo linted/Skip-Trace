@@ -69,7 +69,7 @@ def is_valid_hostname(hostname):
     hostname = hostname.rstrip('.')
     labels = hostname.split('.')
     # the TLD must be not all-numeric
-    if labels[-1].isdigit():
+    if len(labels) > 1 and labels[-1].isdigit():
         return False
     for label in labels:
     	#Check for length
