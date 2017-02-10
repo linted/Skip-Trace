@@ -4,7 +4,6 @@ try:
 	import time
 	import sqlite3
 	import argparse
-	import re
 	from ipaddress import ip_address
 	from os.path import isfile
 	from Crypto.Cipher import PKCS1_OAEP
@@ -67,13 +66,23 @@ class MyUDPHandler(socketserver.BaseRequestHandler):
 			logger.info("[+] Done")
 
 def is_valid_hostname(hostname):
-    hostname = hostname.rstrip('.');
+    hostname = hostname.rstrip('.')
     labels = hostname.split('.')
     # the TLD must be not all-numeric
-    if re.match(r"[0-9]+$", labels[-1]):
+    if labels[-1].isdigit():
         return False
-    allowed = re.compile(r"(?!-)[a-z0-9-]{1,63}(?<!-)$", re.IGNORECASE)
-    return all(allowed.match(label) for label in labels)
+    for label in labels:
+    	#Check for length
+        if len(label) > 63:
+            return False
+        #Check for invalid characters
+        if len(label.translate(is_valid_hostname.translation_table)) > 0 :    
+            return False
+        #Check that no label start or ends with a hyphen
+        if label[0] == '-' or label[-1] == '-':
+            return False
+    return True
+is_valid_hostname.translation_table = dict.fromkeys(map(ord,string.ascii_letters + string.digits + '-'),None)
 
 def keyGen(path):
 	key = RSA.generate(2048)
