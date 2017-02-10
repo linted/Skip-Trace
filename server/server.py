@@ -1,5 +1,5 @@
 try:
-	from STcommon import *
+	from STcommon import configDebugLog
 	import socketserver
 	import time
 	import sqlite3
@@ -95,7 +95,7 @@ if __name__ == "__main__":
 
 	#check if we have the private key
 	if not isfile("./python.pem"):
-		logger.critical("[-] Missing public key, Exiting")
+		logger.critical("[-] Missing private key, Exiting")
 		exit(-2)
 
 	with open("./python.pem", "r") as keyFile:

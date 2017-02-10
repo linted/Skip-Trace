@@ -1,5 +1,5 @@
 try:
-	from STcommon import *
+	from STcommon import configDebugLog
 	import socket
 	import argparse
 	from ipaddress import ip_address
@@ -95,6 +95,6 @@ if __name__ == "__main__":
 	with open("./python.pub", "r") as keyFile:
 		cipherRSA = PKCS1_OAEP.new(RSA.importKey(keyFile.read()))
 
-	while(not main(SERVER, PORT, cipherRSA)):
+	while(not main(HOST, PORT, cipherRSA)):
 		logger.info("[ ] Trying again.")
 	exit(0)
