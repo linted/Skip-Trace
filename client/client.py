@@ -1,5 +1,5 @@
 try:
-	from STcommon import *
+	from STcommon import configDebugLog
 	import socket
 	import argparse
 	from ipaddress import ip_address

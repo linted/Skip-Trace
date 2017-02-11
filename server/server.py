@@ -1,7 +1,7 @@
 try:
-	from STcommon import *
+	from STcommon import configDebugLog
 	import socketserver
-	import time
+	from time import strftime
 	import sqlite3
 	import argparse
 	from ipaddress import ip_address
@@ -14,8 +14,6 @@ try:
 except ImportError as e:
 	print("[-] {}, exiting".format(e))
 	exit(1)
-
-months = ["Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec"]
 
 class MyUDPHandler(socketserver.BaseRequestHandler):
 	RSAcipher = None
@@ -45,9 +43,8 @@ class MyUDPHandler(socketserver.BaseRequestHandler):
 				raise ValueError("Invalid key size")
 
 			with open("/var/log/locationLog", "a") as logFile:
-				date = time.localtime()
-				logFile.write("{0}  {1:02} {2:02}:{3:02}:{4:02}  {6} Checking in at {5}\n".format(months[date.tm_mon - 1], date.tm_mday, date.tm_hour, date.tm_min, date.tm_sec, self.client_address[0], clientName))
-				logger.info("[+] IP Logged to file")
+				logFile.write(strftime('%b  %d %H:%M:%S  {0} checking in at {1}\n'.format(clientName,self.client_address[0])))
+				print("[+] IP Logged to file")
 			
 		except BaseException as e:
 			logger.warning("[-] Failure: {}".format(e))
@@ -84,18 +81,10 @@ def is_valid_hostname(hostname):
     return True
 is_valid_hostname.translation_table = dict.fromkeys(map(ord,string.ascii_letters + string.digits + '-'),None)
 
-def keyGen(path):
-	key = RSA.generate(2048)
-	with open(path +'/python.pem','wb') as privateKey:
-		privateKey.write(key.exportKey('PEM'))
-	with open(path+ '/python.pub', 'wb') as publicKey:
-		publicKey.write(key.publickey().exportKey('PEM'))
-
 def parseArgs():
 	'''Parses args using the argparse lib'''
 	parser = argparse.ArgumentParser(description='Location logging server')
 
-	parser.add_argument('-g', '--generate-keys', metavar='PATH', type=str)
 	parser.add_argument('-a', '--address', metavar='ADDRESS', type=ip_address)
 	parser.add_argument('-p', '--port', metavar='PORT', type=int)
 
@@ -108,8 +97,6 @@ if __name__ == "__main__":
 	args = parseArgs()
 
 	#check our args and update vars accordingly
-	if args.generate_keys:
-		keyGen(args.generate_keys)
 	if args.address:
 		HOST = str(args.address)
 	if args.port:
@@ -117,7 +104,7 @@ if __name__ == "__main__":
 
 	#check if we have the private key
 	if not isfile("./python.pem"):
-		logger.critical("[-] Missing public key, Exiting")
+		logger.critical("[-] Missing private key, Exiting")
 		exit(-2)
 
 	with open("./python.pem", "r") as keyFile:
