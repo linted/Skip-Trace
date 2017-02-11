@@ -1,7 +1,7 @@
 try:
-	from STcommon import configDebugLog
 	import socket
 	import argparse
+	from STcommon import configDebugLog
 	from ipaddress import ip_address
 	from os.path import isfile
 	from Crypto.Cipher import PKCS1_OAEP

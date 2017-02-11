@@ -1,9 +1,8 @@
 try:
-	from STcommon import configDebugLog
 	import socketserver
-	from time import strftime
-	import sqlite3
 	import argparse
+	from time import strftime
+	from STcommon import configDebugLog
 	from ipaddress import ip_address
 	from os.path import isfile
 	from Crypto.Cipher import PKCS1_OAEP
