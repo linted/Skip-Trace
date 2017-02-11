@@ -31,7 +31,10 @@ class MyUDPHandler(socketserver.BaseRequestHandler):
 
 			#get client Name
 			clientName = msg[1].strip()[:32]
-			if len(clientName) == 0:
+			if 0 < len(clientName) <= 253:
+				if !(is_valid_hostname(clientName)):
+					raise ValueError("Invalid hostname")
+			else
 				raise ValueError("Invalid hostname size")
 
 			#create AES key for reply
@@ -58,6 +61,25 @@ class MyUDPHandler(socketserver.BaseRequestHandler):
 		finally:
 			socket.sendto(reply + b"\n", self.client_address)
 			logger.info("[+] Done")
+
+def is_valid_hostname(hostname):
+    hostname = hostname.rstrip('.')
+    labels = hostname.split('.')
+    # the TLD must be not all-numeric
+    if len(labels) > 1 and labels[-1].isdigit():
+        return False
+    for label in labels:
+    	#Check for length
+        if len(label) > 63:
+            return False
+        #Check for invalid characters
+        if len(label.translate(is_valid_hostname.translation_table)) > 0 :    
+            return False
+        #Check that no label start or ends with a hyphen
+        if label[0] == '-' or label[-1] == '-':
+            return False
+    return True
+is_valid_hostname.translation_table = dict.fromkeys(map(ord,string.ascii_letters + string.digits + '-'),None)
 
 def parseArgs():
 	'''Parses args using the argparse lib'''
