@@ -1,7 +1,7 @@
 try:
-	from STcommon import configDebugLog
 	import socket
 	import argparse
+	from STcommon import configDebugLog
 	from ipaddress import ip_address
 	from os.path import isfile
 	from Crypto.Cipher import PKCS1_OAEP
@@ -13,7 +13,7 @@ except ImportError as e:
 	print("[-] {}, exiting".format(e))
 	exit(1)
 
-def main(HOST, PORT, CIPHER, tryAgain = 6):
+def contactServer(HOST, PORT, CIPHER, tryAgain = 6):
 
 	AES_key = Random.new().read(32)
 	msg = CIPHER.encrypt("3317BLT5_#_{0}_#_{1}\n".format(socket.gethostname()[:32], hexlify(AES_key).decode()).encode())
@@ -73,8 +73,7 @@ def parseArgs():
 
 	return parser.parse_args()
 
-if __name__ == "__main__":
-	logger = configDebugLog("/var/log/skip_trace.log")
+def main():
 	HOST, PORT = "localhost", 3145
 	logger.info("[ ] Starting location logging")
 
@@ -95,6 +94,10 @@ if __name__ == "__main__":
 	with open("./python.pub", "r") as keyFile:
 		cipherRSA = PKCS1_OAEP.new(RSA.importKey(keyFile.read()))
 
-	while(not main(HOST, PORT, cipherRSA)):
+	while(not contactServer(HOST, PORT, cipherRSA)):
 		logger.info("[ ] Trying again.")
+
+if __name__ == "__main__":
+	logger = configDebugLog("/var/log/skip_trace.log")
+	main()
 	exit(0)

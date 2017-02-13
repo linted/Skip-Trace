@@ -1,9 +1,8 @@
 try:
-	from STcommon import configDebugLog
 	import socketserver
-	from time import strftime
-	import sqlite3
 	import argparse
+	from time import strftime
+	from STcommon import configDebugLog
 	from ipaddress import ip_address
 	from os.path import isfile
 	from Crypto.Cipher import PKCS1_OAEP
@@ -90,8 +89,7 @@ def parseArgs():
 
 	return parser.parse_args()
 
-if __name__ == "__main__":
-	logger = configDebugLog("/var/log/skip_trace.log")
+def main():
 	HOST, PORT = "0.0.0.0", 3145
 
 	args = parseArgs()
@@ -112,3 +110,7 @@ if __name__ == "__main__":
 
 	server = socketserver.UDPServer((HOST, PORT), MyUDPHandler)
 	server.serve_forever()
+
+if __name__ == "__main__":
+	logger = configDebugLog("/var/log/skip_trace.log")
+	main()
