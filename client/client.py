@@ -44,7 +44,7 @@ def contactServer(HOST, PORT, CIPHER, tryAgain = 6):
 
 	reply = cipherAES.decrypt(received[AES.block_size:])
 
-	if reply.decode().split("\t")[1] == socket.gethostname().strip()[:32]:
+	if reply.decode().split("_#_")[1] == socket.gethostname().strip()[:32]:
 		logger.info("[+] Location logged to server")
 		return True
 	else:
