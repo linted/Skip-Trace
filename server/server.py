@@ -54,7 +54,7 @@ class MyUDPHandler(socketserver.BaseRequestHandler):
 			#create AES cipher
 			iv = Random.new().read(AES.block_size)
 			AEScipher = AES.new(key, AES.MODE_CFB, iv)
-			reply = iv + AEScipher.encrypt(strftime('\t{0}\t%H:%M\n'.format(clientName)))
+			reply = iv + AEScipher.encrypt(strftime('_#_{0}_#_%H:%M:%S:%f\n'.format(clientName)))
 			logger.info("[+] Sending success message")
 
 		finally:
